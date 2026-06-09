@@ -2,10 +2,13 @@
 // Enable error reporting for debugging (Disable in Production!)
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
+
 // Start session for CSRF token management
 session_start();
+
 // Define a constant to protect sensitive included files
 define('SECURE_ACCESS', true);
+
 // Require essential files
 require_once __DIR__ . '/backend/db/Database.php';
 require_once __DIR__ . '/backend/routes/Router.php';
