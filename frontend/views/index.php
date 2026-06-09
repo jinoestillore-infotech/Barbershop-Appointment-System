@@ -234,7 +234,7 @@
             <span class="text-uppercase tracking-widest fw-semibold text-muted" style="font-size: 0.7rem; letter-spacing: 0.25em;">Est. 2026</span>
             <span style="width: 24px; height: 1px; background: var(--color-primary);"></span>
         </div>
-        <h1 class="font-luxury fw-bold display-5 text-dark mb-2">THE NOBLE GROOM</h1>
+        <h1 class="font-luxury fw-bold display-5 text-dark mb-2">THE NOBLE BARBER</h1>
         <p class="text-muted small mx-auto mb-4" style="max-width: 480px; font-size: 0.9rem;">
             Experience unparalleled precision barbering. Secure your elite personal grooming session below.
         </p>
