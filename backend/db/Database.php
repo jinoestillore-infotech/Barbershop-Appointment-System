@@ -2,17 +2,21 @@
 namespace Backend\Db;
 
 class Database {
-    private $host = "localhost";
-    private $db_name = "barbershop_db";
-    private $username = "root"; 
-    private $password = "";
     public $conn;
 
     public function getConnection() {
         $this->conn = null;
+        
+        // Securely load configuration
+        $config = require __DIR__ . '/../../config.php';
+        
         try {
-            // Create a new PDO instance
-            $this->conn = new \PDO("mysql:host=" . $this->host . ";dbname=" . $this->db_name, $this->username, $this->password);
+            // Create a new PDO instance using config file values
+            $this->conn = new \PDO(
+                "mysql:host=" . $config['db_host'] . ";dbname=" . $config['db_name'], 
+                $config['db_user'], 
+                $config['db_pass']
+            );
             $this->conn->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         } catch(\PDOException $exception) {
             echo "Connection error: " . $exception->getMessage();

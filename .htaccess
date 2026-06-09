@@ -1,0 +1,11 @@
+# 1. Disable Directory Browsing (Stops users from seeing file lists)
+Options -Indexes
+
+# 2. Block direct access to internal folders and sensitive files
+RewriteEngine On
+RewriteRule ^(backend|frontend|config\.php) - [F,L]
+
+# 3. Route all traffic through index.php for the Router to handle
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
