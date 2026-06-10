@@ -13,9 +13,11 @@ define('SECURE_ACCESS', true);
 require_once __DIR__ . '/backend/db/Database.php';
 require_once __DIR__ . '/backend/routes/Router.php';
 require_once __DIR__ . '/backend/controllers/AppointmentController.php';
+require_once __DIR__ . '/backend/controllers/AdminController.php';
 
 use Backend\Routes\Router;
 use Backend\Controllers\AppointmentController;
+use Backend\Controllers\AdminController;
 
 // Initialize the Router
 $router = new Router();
@@ -23,6 +25,7 @@ $router = new Router();
 // Define Application Routes
 $router->get('/', [AppointmentController::class, 'index']);
 $router->post('/book', [AppointmentController::class, 'store']);
+
 $router->get('/admin/login', [AdminController::class, 'loginView']);
 $router->post('/admin/login', [AdminController::class, 'login']);
 $router->post('/admin/logout', [AdminController::class, 'logout']);
