@@ -78,7 +78,7 @@ class AdminController {
                 $_SESSION['admin_username'] = $admin['username'];
                 
                 // Added leading backslash to force global scope (Line 83 fix!)
-                header("Location: " . \BASE_PATH . "/admin");
+                header("Location: " . \BASE_PATH . "/admin_dashboard");
                 exit();
             } else {
                 $_SESSION['login_error'] = "Invalid username or password.";
@@ -185,6 +185,12 @@ class AdminController {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
 
+        // --- CHECK ADMIN LIMIT ---
+        $stmt_count = $this->db->query("SELECT COUNT(*) FROM admins");
+        $admin_count = $stmt_count->fetchColumn();
+        $limit_reached = ($admin_count >= 2);
+        // -------------------------
+
         require_once __DIR__ . '/../../frontend/views/admin_register.php';
     }
 
@@ -195,6 +201,18 @@ class AdminController {
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            
+            // --- CHECK ADMIN LIMIT BEFORE SAVING ---
+            $stmt_count = $this->db->query("SELECT COUNT(*) FROM admins");
+            $admin_count = $stmt_count->fetchColumn();
+
+            if ($admin_count >= 2) {
+                $_SESSION['register_error'] = "Registration locked: Maximum of 2 admin accounts allowed.";
+                header("Location: " . \BASE_PATH . "/admin/register");
+                exit();
+            }
+            // ---------------------------------------
+
             $username = trim(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS));
             $password = $_POST['password'];
 

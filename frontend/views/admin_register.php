@@ -29,21 +29,28 @@
         <div class="success"><?php echo $_SESSION['register_success']; unset($_SESSION['register_success']); ?></div>
     <?php endif; ?>
 
-    <form action="<?php echo \BASE_PATH; ?>/admin/register" method="POST">
-        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
-        
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
-        </div>
+    <?php if (!isset($limit_reached) || !$limit_reached): ?>
+        <form action="<?php echo \BASE_PATH; ?>/admin/register" method="POST">
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
+            
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-        </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
 
-        <button type="submit">Register Admin</button>
-    </form>
+            <button type="submit">Register Admin</button>
+        </form>
+    <?php else: ?>
+        <div class="alert" style="text-align: center; background-color: #e2e3e5; color: #383d41;">
+            <strong>Registration Closed</strong><br>
+            The maximum number of allowed admins (2) has been reached.
+        </div>
+    <?php endif; ?>
     
     <p style="text-align: center; margin-top: 15px;">
         <a href="<?php echo \BASE_PATH; ?>/admin/login">Back to Login</a>
