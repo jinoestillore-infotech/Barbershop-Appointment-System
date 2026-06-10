@@ -23,6 +23,11 @@ $router = new Router();
 // Define Application Routes
 $router->get('/', [AppointmentController::class, 'index']);
 $router->post('/book', [AppointmentController::class, 'store']);
+$router->get('/admin/login', [AdminController::class, 'loginView']);
+$router->post('/admin/login', [AdminController::class, 'login']);
+$router->post('/admin/logout', [AdminController::class, 'logout']);
+$router->get('/admin', [AdminController::class, 'dashboard']);
+$router->post('/admin/update-status', [AdminController::class, 'updateStatus']);
 
 // Dispatch the request
 $router->resolve($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
