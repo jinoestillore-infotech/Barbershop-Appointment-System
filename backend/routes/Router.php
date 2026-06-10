@@ -24,7 +24,7 @@ class Router {
         if ($scriptName !== '/' && $scriptName !== '\\') {
             $path = str_replace($scriptName, '', $path);
         }
-        $path = '/' . ltrim($path, '/');
+        $path = '/' . trim($path, '/');
 
         // Check if the route exists
         if (isset($this->routes[$method][$path])) {

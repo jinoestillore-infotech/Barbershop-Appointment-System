@@ -4,6 +4,7 @@ Options -Indexes
 # 2. Block direct access to internal folders and sensitive files
 RewriteEngine On
 RewriteRule ^(backend|frontend|config\.php) - [F,L]
+RewriteBase /barbershop-system/
 
 # 3. Route all traffic through index.php for the Router to handle
 RewriteCond %{REQUEST_FILENAME} !-f

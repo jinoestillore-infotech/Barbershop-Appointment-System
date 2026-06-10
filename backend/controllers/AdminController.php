@@ -78,7 +78,7 @@ class AdminController {
                 $_SESSION['admin_username'] = $admin['username'];
                 
                 // Added leading backslash to force global scope (Line 83 fix!)
-                header("Location: " . \BASE_PATH . "/admin_dashboard");
+                header("Location: " . \BASE_PATH . "/admin");
                 exit();
             } else {
                 $_SESSION['login_error'] = "Invalid username or password.";

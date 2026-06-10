@@ -376,7 +376,7 @@
 
                     <div class="form-floating mb-4">
                         <select class="form-select" id="service" name="service" required>
-                            <option value="Barber's Cut">Barber's Cut</option>
+                            <option value="Barber Cut">Barber Cut</option>
                             <option value="Fade Cut">Fade Cut</option>
                             <option value="Skin Fade">Skin Fade</option>
                             <option value="Taper Fade">Taper Fade</option>
@@ -404,7 +404,7 @@
                         <span style="font-size: 1.1rem; line-height: 1;">⚠️</span>
                         <div class="small" style="font-size: 0.8rem;">
                             <strong class="d-block mb-1">Strict Attendance Rule</strong>
-                            We execute highly detailed services back-to-back. Lateness of more than <strong>2-3 minutes</strong> will result in immediate slot cancellation for waiting walk-ins.
+                            We execute highly detailed services back-to-back. Lateness of more than <strong>1-2 minutes</strong> will result in immediate slot cancellation for waiting walk-ins.
                         </div>
                     </div>
 
@@ -474,7 +474,7 @@
                                 <span>⚠️</span> LATENESS POLICY WARNING
                             </strong>
                             <p class="small mb-0 text-dark-emphasis" style="font-size: 0.75rem;">
-                                Please arrive on site exactly on time. Delaying your session by <strong>2 to 3 minutes</strong> forfeits the slot automatically to ensure structural scheduling flow.
+                                Please arrive on site early or exactly on time. Delaying your session by <strong>1 to 2 minutes</strong> forfeits the slot automatically, to ensure structural scheduling flow.
                             </p>
                         </div>
 
