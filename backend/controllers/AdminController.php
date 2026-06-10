@@ -173,5 +173,65 @@ class AdminController {
             }
         }
     }
+
+    // Render Admin Registration Page
+    public function registerView() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Generate CSRF token
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+
+        require_once __DIR__ . '/../../frontend/views/admin_register.php';
+    }
+
+    // Handle Admin Registration Action
+    public function register() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $username = trim(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS));
+            $password = $_POST['password'];
+
+            if (empty($username) || empty($password)) {
+                $_SESSION['register_error'] = "Username and password are required.";
+                header("Location: " . \BASE_PATH . "/admin/register");
+                exit();
+            }
+
+            // Check if username already exists
+            $stmt_check = $this->db->prepare("SELECT id FROM admins WHERE username = :username");
+            $stmt_check->bindParam(':username', $username);
+            $stmt_check->execute();
+            if ($stmt_check->fetch()) {
+                $_SESSION['register_error'] = "Username is already taken.";
+                header("Location: " . \BASE_PATH . "/admin/register");
+                exit();
+            }
+
+            // Hash the password securely
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+            // Insert into database
+            $stmt = $this->db->prepare("INSERT INTO admins (username, password) VALUES (:username, :password)");
+            $stmt->bindParam(':username', $username);
+            $stmt->bindParam(':password', $hashed_password);
+
+            if ($stmt->execute()) {
+                $_SESSION['register_success'] = "Admin created successfully! You can now log in.";
+                header("Location: " . \BASE_PATH . "/admin/register");
+                exit();
+            } else {
+                $_SESSION['register_error'] = "Failed to create admin.";
+                header("Location: " . \BASE_PATH . "/admin/register");
+                exit();
+            }
+        }
+    }
 }
 ?>

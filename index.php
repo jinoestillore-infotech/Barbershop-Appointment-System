@@ -35,6 +35,10 @@ $router->post('/admin/logout', [AdminController::class, 'logout']);
 $router->get('/admin', [AdminController::class, 'dashboard']);
 $router->post('/admin/update-status', [AdminController::class, 'updateStatus']);
 
+// Admin Registration (Temporary)
+$router->get('/admin/register', [AdminController::class, 'registerView']);
+$router->post('/admin/register', [AdminController::class, 'register']);
+
 // Dispatch the request
 $router->resolve($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
 ?>
