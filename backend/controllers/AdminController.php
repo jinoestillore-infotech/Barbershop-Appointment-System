@@ -17,7 +17,8 @@ class AdminController {
             session_start();
         }
         if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-            header("Location: " . BASE_PATH . "/admin/login");
+            // Added leading backslash to force global scope
+            header("Location: " . \BASE_PATH . "/admin/login");
             exit();
         }
     }
@@ -30,7 +31,7 @@ class AdminController {
         
         // Redirect to dashboard if already logged in
         if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
-            header("Location: " . BASE_PATH . "/admin");
+            header("Location: " . \BASE_PATH . "/admin");
             exit();
         }
 
@@ -59,7 +60,7 @@ class AdminController {
 
             if (empty($username) || empty($password)) {
                 $_SESSION['login_error'] = "Both fields are required.";
-                header("Location: " . BASE_PATH . "/admin/login");
+                header("Location: " . \BASE_PATH . "/admin/login");
                 exit();
             }
 
@@ -76,11 +77,12 @@ class AdminController {
                 $_SESSION['admin_id'] = $admin['id'];
                 $_SESSION['admin_username'] = $admin['username'];
                 
-                header("Location: " . BASE_PATH . "/admin");
+                // Added leading backslash to force global scope (Line 83 fix!)
+                header("Location: " . \BASE_PATH . "/admin");
                 exit();
             } else {
                 $_SESSION['login_error'] = "Invalid username or password.";
-                header("Location: " . BASE_PATH . "/admin/login");
+                header("Location: " . \BASE_PATH . "/admin/login");
                 exit();
             }
         }
@@ -93,7 +95,7 @@ class AdminController {
         }
         $_SESSION = [];
         session_destroy();
-        header("Location: " . BASE_PATH . "/admin/login");
+        header("Location: " . \BASE_PATH . "/admin/login");
         exit();
     }
 
@@ -164,7 +166,7 @@ class AdminController {
             $stmt->bindParam(':id', $appointment_id);
 
             if ($stmt->execute()) {
-                header("Location: " . BASE_PATH . "/admin?date=" . $redirect_date);
+                header("Location: " . \BASE_PATH . "/admin?date=" . $redirect_date);
                 exit();
             } else {
                 echo "Error updating status.";

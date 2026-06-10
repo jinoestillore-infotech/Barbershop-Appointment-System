@@ -8,6 +8,9 @@ session_start();
 
 // Define a constant to protect sensitive included files
 define('SECURE_ACCESS', true);
+$basePath = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+$basePath = rtrim($basePath, '/');
+define('BASE_PATH', $basePath);
 
 // Require essential files
 require_once __DIR__ . '/backend/db/Database.php';
