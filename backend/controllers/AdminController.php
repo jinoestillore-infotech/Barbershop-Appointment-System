@@ -17,7 +17,7 @@ class AdminController {
             session_start();
         }
         if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-            header("Location: " . dirname($_SERVER['SCRIPT_NAME']) . "/admin/login");
+            header("Location: " . BASE_PATH . "/admin/login");
             exit();
         }
     }
@@ -30,7 +30,7 @@ class AdminController {
         
         // Redirect to dashboard if already logged in
         if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
-            header("Location: " . dirname($_SERVER['SCRIPT_NAME']) . "/admin");
+            header("Location: " . BASE_PATH . "/admin");
             exit();
         }
 
@@ -59,7 +59,7 @@ class AdminController {
 
             if (empty($username) || empty($password)) {
                 $_SESSION['login_error'] = "Both fields are required.";
-                header("Location: " . dirname($_SERVER['SCRIPT_NAME']) . "/admin/login");
+                header("Location: " . BASE_PATH . "/admin/login");
                 exit();
             }
 
@@ -76,11 +76,11 @@ class AdminController {
                 $_SESSION['admin_id'] = $admin['id'];
                 $_SESSION['admin_username'] = $admin['username'];
                 
-                header("Location: " . dirname($_SERVER['SCRIPT_NAME']) . "/admin");
+                header("Location: " . BASE_PATH . "/admin");
                 exit();
             } else {
                 $_SESSION['login_error'] = "Invalid username or password.";
-                header("Location: " . dirname($_SERVER['SCRIPT_NAME']) . "/admin/login");
+                header("Location: " . BASE_PATH . "/admin/login");
                 exit();
             }
         }
@@ -93,7 +93,7 @@ class AdminController {
         }
         $_SESSION = [];
         session_destroy();
-        header("Location: " . dirname($_SERVER['SCRIPT_NAME']) . "/admin/login");
+        header("Location: " . BASE_PATH . "/admin/login");
         exit();
     }
 
@@ -125,7 +125,6 @@ class AdminController {
         $metrics = $stmt_metrics->fetch(\PDO::FETCH_ASSOC);
 
         // Calculate estimated revenue from completed services
-        // Extract price from service string like "Signature Haircut ($35)"
         $revenue = 0;
         $stmt_all_completed = $this->db->prepare("SELECT service FROM appointments WHERE appointment_date = :selected_date AND status = 'Completed'");
         $stmt_all_completed->bindParam(':selected_date', $selected_date);
@@ -165,7 +164,7 @@ class AdminController {
             $stmt->bindParam(':id', $appointment_id);
 
             if ($stmt->execute()) {
-                header("Location: " . dirname($_SERVER['SCRIPT_NAME']) . "/admin?date=" . $redirect_date);
+                header("Location: " . BASE_PATH . "/admin?date=" . $redirect_date);
                 exit();
             } else {
                 echo "Error updating status.";
