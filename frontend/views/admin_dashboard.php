@@ -52,8 +52,8 @@
 <!-- Secure Navigation Header -->
 <nav class="navbar admin-nav navbar-dark px-3 py-3 mb-4">
     <div class="container-fluid d-flex justify-content-between align-items-center">
-        <span class="navbar-brand fw-bold fs-5 mb-0">💈 Noble Console</span>
-        <form action="<?= dirname($_SERVER['SCRIPT_NAME']) ?>/admin/logout" method="POST" class="m-0">
+        <span class="navbar-brand fw-bold fs-5 mb-0">Noble Console</span>
+        <form action="<?= \BASE_PATH ?>/admin/logout" method="POST" class="m-0">
             <button type="submit" class="btn btn-outline-light btn-sm rounded-pill px-3">Logout</button>
         </form>
     </div>
@@ -68,7 +68,7 @@
             <small class="text-muted"><?= date('l, M d, Y', strtotime($selected_date)) ?></small>
         </div>
         <div class="col-6 text-end">
-            <form method="GET" action="<?= dirname($_SERVER['SCRIPT_NAME']) ?>/admin">
+            <form method="GET" action="<?= \BASE_PATH ?>/admin">
                 <input type="date" 
                        class="form-control form-control-sm text-center fw-bold shadow-sm d-inline-block w-auto rounded-pill border-secondary" 
                        name="date" 
@@ -127,14 +127,17 @@
                         <h6 class="fw-bold text-dark mb-0"><?= htmlspecialchars($apt['customer_name']) ?></h6>
                         <span class="text-muted small d-block mb-1"><?= htmlspecialchars($apt['phone']) ?></span>
                         <span class="badge bg-light text-dark border py-1.5 px-2 rounded-2 small" style="font-size: 0.7rem;">
-                            <?= htmlspecialchars($apt['service']) ?>
+                            <?= html_entity_decode(htmlspecialchars($apt['service']), ENT_QUOTES) ?>
                         </span>
                     </div>
 
                     <!-- Manage Actions Segment -->
                     <div class="text-end">
-                        <button class="btn btn-outline-dark btn-sm rounded-pill fw-semibold px-3" 
-                                onclick="openManageSheet(<?= $apt['id'] ?>, '<?= htmlspecialchars($apt['customer_name'], ENT_QUOTES) ?>', '<?= $apt['status'] ?>')">
+                        <!-- Modern dataset binding prevents JS syntax failures -->
+                        <button class="btn btn-outline-dark btn-sm rounded-pill fw-semibold px-3 update-action-btn" 
+                                data-id="<?= $apt['id'] ?>"
+                                data-name="<?= htmlspecialchars($apt['customer_name'], ENT_QUOTES, 'UTF-8') ?>"
+                                data-status="<?= htmlspecialchars($apt['status'], ENT_QUOTES, 'UTF-8') ?>">
                             Update
                         </button>
                     </div>
@@ -163,7 +166,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
-            <form action="<?= dirname($_SERVER['SCRIPT_NAME']) ?>/admin/update-status" method="POST">
+            <form action="<?= \BASE_PATH ?>/admin/update-status" method="POST">
                 <!-- CSRF and Redirect data fields -->
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                 <input type="hidden" name="appointment_id" id="modal_apt_id">
@@ -211,28 +214,45 @@
     </div>
 </div>
 
+<!-- Bootstrap 5 JS Bundle (CRITICAL FIX FOR THE MODAL SHEETS FLOW) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    function openManageSheet(aptId, clientName, currentStatus) {
-        document.getElementById('modal_apt_id').value = aptId;
-        document.getElementById('modal_client_name').innerText = "Client: " + clientName;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Find all update buttons and attach click listeners dynamically
+        const updateButtons = document.querySelectorAll('.update-action-btn');
+        const manageSheetModal = new bootstrap.Modal(document.getElementById('manageSheet'));
 
-        // Uncheck all radios first
-        document.getElementById('status_confirmed').checked = false;
-        document.getElementById('status_completed').checked = false;
-        document.getElementById('status_cancelled').checked = false;
+        updateButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Read clean dataset attributes
+                const aptId = this.getAttribute('data-id');
+                const clientName = this.getAttribute('data-name');
+                const currentStatus = this.getAttribute('data-status');
 
-        // Auto-check the current status radio
-        if (currentStatus === 'Confirmed') {
-            document.getElementById('status_confirmed').checked = true;
-        } else if (currentStatus === 'Completed') {
-            document.getElementById('status_completed').checked = true;
-        } else if (currentStatus === 'Cancelled') {
-            document.getElementById('status_cancelled').checked = true;
-        }
+                // Bind elements in modal sheet
+                document.getElementById('modal_apt_id').value = aptId;
+                document.getElementById('modal_client_name').innerText = "Client: " + clientName;
 
-        var modal = new bootstrap.Modal(document.getElementById('manageSheet'));
-        modal.show();
-    }
+                // Reset all radio inputs
+                document.getElementById('status_confirmed').checked = false;
+                document.getElementById('status_completed').checked = false;
+                document.getElementById('status_cancelled').checked = false;
+
+                // Auto-select corresponding radio matching current state
+                if (currentStatus === 'Confirmed') {
+                    document.getElementById('status_confirmed').checked = true;
+                } else if (currentStatus === 'Completed') {
+                    document.getElementById('status_completed').checked = true;
+                } else if (currentStatus === 'Cancelled') {
+                    document.getElementById('status_cancelled').checked = true;
+                }
+
+                // Smoothly trigger modal sheet presentation
+                manageSheetModal.show();
+            });
+        });
+    });
 </script>
 
 </body>

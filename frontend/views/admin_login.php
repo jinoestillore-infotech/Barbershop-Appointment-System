@@ -48,7 +48,6 @@
 
 <div class="login-card p-4 p-sm-5">
     <div class="text-center mb-4">
-        <span class="fs-1 d-block mb-2">💈</span>
         <h3 class="fw-bold text-dark mb-1">Noble Console</h3>
         <p class="text-muted small">Enter administrative credentials to gain entry</p>
     </div>

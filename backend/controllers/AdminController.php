@@ -77,7 +77,6 @@ class AdminController {
                 $_SESSION['admin_id'] = $admin['id'];
                 $_SESSION['admin_username'] = $admin['username'];
                 
-                // Added leading backslash to force global scope (Line 83 fix!)
                 header("Location: " . \BASE_PATH . "/admin");
                 exit();
             } else {
@@ -126,18 +125,11 @@ class AdminController {
         $stmt_metrics->execute();
         $metrics = $stmt_metrics->fetch(\PDO::FETCH_ASSOC);
 
-        // Calculate estimated revenue from completed services
-        $revenue = 0;
-        $stmt_all_completed = $this->db->prepare("SELECT service FROM appointments WHERE appointment_date = :selected_date AND status = 'Completed'");
-        $stmt_all_completed->bindParam(':selected_date', $selected_date);
-        $stmt_all_completed->execute();
-        $completed_services = $stmt_all_completed->fetchAll(\PDO::FETCH_COLUMN);
-
-        foreach ($completed_services as $service) {
-            if (preg_match('/\$([0-9]+)/', $service, $matches)) {
-                $revenue += intval($matches[1]);
-            }
-        }
+        // 3. Calculate daily revenue directly from database based on actual stored prices
+        $stmt_rev = $this->db->prepare("SELECT SUM(price_paid) as total_rev FROM appointments WHERE appointment_date = :selected_date AND status = 'Completed'");
+        $stmt_rev->bindParam(':selected_date', $selected_date);
+        $stmt_rev->execute();
+        $revenue = floatval($stmt_rev->fetch(\PDO::FETCH_ASSOC)['total_rev'] ?? 0);
 
         require_once __DIR__ . '/../../frontend/views/admin_dashboard.php';
     }
@@ -155,14 +147,19 @@ class AdminController {
             $appointment_id = intval($_POST['appointment_id']);
             $new_status = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_SPECIAL_CHARS);
             $redirect_date = filter_input(INPUT_POST, 'redirect_date', FILTER_SANITIZE_SPECIAL_CHARS);
+            
+            // Get the price paid submitted from the modal form
+            $price_paid = isset($_POST['price_paid']) ? floatval($_POST['price_paid']) : 0.00;
 
             $allowed_statuses = ['Confirmed', 'Completed', 'Cancelled'];
             if (!in_array($new_status, $allowed_statuses)) {
                 die("Invalid status change attempt.");
             }
 
-            $stmt = $this->db->prepare("UPDATE appointments SET status = :status WHERE id = :id");
+            // Save both the new status and the custom manual price entry in the DB
+            $stmt = $this->db->prepare("UPDATE appointments SET status = :status, price_paid = :price_paid WHERE id = :id");
             $stmt->bindParam(':status', $new_status);
+            $stmt->bindParam(':price_paid', $price_paid);
             $stmt->bindParam(':id', $appointment_id);
 
             if ($stmt->execute()) {
